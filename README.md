@@ -1,0 +1,2 @@
+# CodeScope
+Code. Faster.
