@@ -1,0 +1,66 @@
+CodeScope Notes
+
+Libraries:
+how2
+
+
+How to live monitor for a phrase being typed...
+
+example commands to look for:
+
+/cs python tree.
+
+then replaces on the line you were ending in while deleting the command typed to this output...
+
+			## anytree
+			I recommend https://pypi.python.org/pypi/anytree (I am the author)
+
+			### Example
+
+			   from anytree import Node, RenderTree
+			   
+			   udo = Node("Udo")
+			   marc = Node("Marc", parent=udo)
+			   lian = Node("Lian", parent=marc)
+			   dan = Node("Dan", parent=udo)
+			   jet = Node("Jet", parent=dan)
+			   jan = Node("Jan", parent=dan)
+			   joe = Node("Joe", parent=dan)
+			   
+			   print(udo)
+			   Node('/Udo')
+			   print(joe)
+			   Node('/Udo/Dan/Joe')
+			   
+			   for pre, fill, node in RenderTree(udo):
+			       print("%s%s" % (pre, node.name))
+			   Udo
+			   ├── Marc
+			   │   └── Lian
+			   └── Dan
+			       ├── Jet
+			       ├── Jan
+			       └── Joe
+			   
+			   print(dan.children)
+			   (Node('/Udo/Dan/Jet'), Node('/Udo/Dan/Jan'), Node('/Udo/Dan/Joe'))
+
+			### Features
+			anytree (http://anytree.readthedocs.io/en/latest/) has also a powerful API with:
+
+
+			    * simple tree creation
+			    * simple tree modification
+			    * pre-order tree iteration
+			    * post-order tree iteration
+			    * resolve relative and absolute node paths 
+			    * walking from one node to an other.
+			    * tree rendering (see example above)
+			    * node attach/detach hookups
+
+			/cs new file in python. 
+
+Make undo and redo functions such as described below:
+
+/cs undo.
+/cs redo.
