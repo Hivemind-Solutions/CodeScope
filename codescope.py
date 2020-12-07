@@ -1,11 +1,11 @@
-from codescope_functions import install_how2
+from codescope_functions import file_check
 
 
 def main():
     print("Initializing CodeScope... ")
 
 
-install_how2()
+file_check()
 
 if __name__ == "__main__":
     main()
