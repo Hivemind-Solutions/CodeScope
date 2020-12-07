@@ -6,7 +6,7 @@ DEBUG = True
 
 # DIRECTORY = "/Users/alexanderhaislip/Desktop"
 DIRECTORY = "/Users/somasz/Desktop/alexCodeScope/csTest1.txt"
-SHORTCUT_PREFIX = "~cs"
+SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
 
@@ -26,11 +26,17 @@ def file_check():
     # search for '~cs' command and return/print it
     for line in fp:
         if line.find(SHORTCUT_PREFIX) != -1:
+
+            # Ensure there is a '.' (suffix) after prefix
+            if line.find(SHORTCUT_SUFFIX) == -1:
+                fp.close()
+                print("WARNING: No suffix: '" + SHORTCUT_SUFFIX + "' command found, returning.")
+                return ""
             fp.close()
             return line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
 
     fp.close()
-    return "No " + SHORTCUT_PREFIX + " command found"
+    return "No prefix '" + SHORTCUT_PREFIX + "' command found."
 
 
 # Parameter: strToInsert is the string you want inserted into file
@@ -65,7 +71,7 @@ def insert_into_file(strToInsert):
                 fileToRead.close()
                 fileToWrite.close()
                 # TODO could also ask if user still wants to insert code here, even though there is no '.'
-                # This would just be error handling
+                # This would just be a supplemental feature
                 return
             fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):])
             SHORTCUT_FOUND = True
@@ -91,7 +97,8 @@ def insert_into_file(strToInsert):
         os.rename(newFileCreated, DIRECTORY)
         print("File modified successfully.")
     else:
-        # TODO could make better by checking entire file for 'cs' command and not doing anything if not found.
+        # TODO Could make better by checking entire file for 'cs' command and not doing anything if not found.
+        # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
         print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
 
