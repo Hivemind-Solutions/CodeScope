@@ -1,7 +1,8 @@
 from itertools import count
 import os
 
-directory = "/Users/alexanderhaislip/Desktop"
+# directory = "/Users/alexanderhaislip/Desktop"
+directory = "/Users/somasz/Desktop/csTest1.txt"
 shortcut_prefix = "~cs"
 shortcut_suffix = "."
 shortcut_Found = False
@@ -16,15 +17,17 @@ def install_itertools():
 
 
 def file_check():
-    files = os.listdir(directory)
-    print(files)
+    # open file for reading
+    fp = open(directory, "r")
 
-    """ with open('/Users/alexanderhaislip/Desktop/testproject') as f:
-        if '/cs' in f.read():
-            print("Command found!")
-        else:
-            print("No CodeScope commands found...")
-"""
+    # search for '~cs' command and return/print it
+    for line in fp:
+        if line.find(shortcut_prefix) != -1:
+            fp.close()
+            return line[0:line.index(shortcut_suffix)]
+
+    fp.close()
+    print("No " + shortcut_prefix + " command found")
 
 def translate():
     print("Translating command...")
