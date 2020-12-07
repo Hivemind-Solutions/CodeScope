@@ -64,3 +64,34 @@ Make undo and redo functions such as described below:
 
 /cs undo.
 /cs redo.
+
+
+TO DO's:
+
+Make a varible with the path
+
+
+- Find a way to look for commands in text you just typed... this is gonna be fugged...
+- Setup the parsing logic for copy and pasting code
+
+what is open?
+store as a keys (or 2d array) (or a map)
+search the directory 
+
+give the path to the file ()
+
+parse the text of the file to see keywords 
+
+after keyphrase found
+
+look it up how2 on terminal
+
+fetch the output and clean the output
+
+copy the ouput
+
+locate the file agian 
+
+appending output
+
+functions (terminaltofile)
