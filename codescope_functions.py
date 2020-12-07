@@ -1,11 +1,14 @@
 from itertools import count
 import os
 
-# directory = "/Users/alexanderhaislip/Desktop"
-directory = "/Users/somasz/Desktop/csTest1.txt"
-shortcut_prefix = "~cs"
-shortcut_suffix = "."
-shortcut_Found = False
+# Set this to True if you want to debug, otherwise False
+DEBUG = True
+
+# DIRECTORY = "/Users/alexanderhaislip/Desktop"
+DIRECTORY = "/Users/somasz/Desktop/alexCodeScope/csTest1.txt"
+SHORTCUT_PREFIX = "~cs"
+SHORTCUT_SUFFIX = "."
+SHORTCUT_FOUND = False
 
 
 def install_how2():
@@ -18,16 +21,80 @@ def install_itertools():
 
 def file_check():
     # open file for reading
-    fp = open(directory, "r")
+    fp = open(DIRECTORY, "r")
 
     # search for '~cs' command and return/print it
     for line in fp:
-        if line.find(shortcut_prefix) != -1:
+        if line.find(SHORTCUT_PREFIX) != -1:
             fp.close()
-            return line[0:line.index(shortcut_suffix)]
+            return line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
 
     fp.close()
-    print("No " + shortcut_prefix + " command found")
+    return "No " + SHORTCUT_PREFIX + " command found"
+
+
+# Parameter: strToInsert is the string you want inserted into file
+def insert_into_file(strToInsert):
+    # Why TF does this need to be declared but not DIRECTORY or anything else
+    SHORTCUT_FOUND = False
+
+    if not os.path.isfile(DIRECTORY):
+        print("WARNING: '" + DIRECTORY + "' is not a valid file")
+        return
+
+    # Create new file to write to
+    newFileCreated = DIRECTORY + ".temp"
+    if DEBUG:
+        print(newFileCreated)
+
+    fileToWrite = open(newFileCreated, "w")
+    fileToRead = open(DIRECTORY, "r")
+
+    for line in fileToRead:
+        curLineIndex = line.find(SHORTCUT_PREFIX)
+
+        if curLineIndex != -1:
+            # Insert strToInsert into file
+            fileToWrite.write(line[0:curLineIndex])
+            fileToWrite.write(strToInsert)
+
+            # Check for SHORTCUT_SUFFIX
+            curLineIndex = line.find(SHORTCUT_SUFFIX)
+            if curLineIndex == -1:
+                print("ERROR: File does not contain 'shortcut suffix': " + SHORTCUT_SUFFIX)
+                fileToRead.close()
+                fileToWrite.close()
+                # TODO could also ask if user still wants to insert code here, even though there is no '.'
+                # This would just be error handling
+                return
+            fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):])
+            SHORTCUT_FOUND = True
+        else:
+            # Copy line to fileToWrite
+            fileToWrite.write(line)
+
+    # Close files
+    fileToRead.close()
+    fileToWrite.close()
+
+    # Overwrite fileToRead (DIRECTORY) with fileToWrite (newFileCreated)
+    if DEBUG and SHORTCUT_FOUND:
+        response = input("Are you sure you want to replace: " + DIRECTORY + "? (y/n) ")
+        if response.lower() == "y" or response.lower() == "yes":
+            os.remove(DIRECTORY)
+            os.rename(newFileCreated, DIRECTORY)
+            print("File modified successfully.")
+        else:
+            print("Created '" + newFileCreated + "' file with desired insertions.")
+    elif SHORTCUT_FOUND:
+        os.remove(DIRECTORY)
+        os.rename(newFileCreated, DIRECTORY)
+        print("File modified successfully.")
+    else:
+        # TODO could make better by checking entire file for 'cs' command and not doing anything if not found.
+        os.remove(newFileCreated)
+        print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
+
 
 def translate():
     print("Translating command...")
