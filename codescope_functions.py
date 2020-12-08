@@ -1,15 +1,13 @@
-from itertools import count
 import os
 
 # Set this to True if you want to debug, otherwise False
 DEBUG = True
 
-# DIRECTORY = "/Users/alexanderhaislip/Desktop"
-DIRECTORY = "/Users/somasz/Desktop/alexCodeScope/csTest1.txt"
+DIRECTORY = "/Users/alexanderhaislip/Desktop/testproject/test.py"
+DIRECTORY_PATH = "/Users/alexanderhaislip/Desktop/testproject/"
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
-
 
 def install_how2():
     """checks for how2 installation or will install it if it is not found"""
@@ -22,8 +20,9 @@ def install_itertools():
 def file_check():
     # open file for reading
     fp = open(DIRECTORY, "r")
+    # setting the cs_shortcut to a varible
 
-    # search for '~cs' command and return/print it
+    # search for '/cs' command and return/print it
     for line in fp:
         if line.find(SHORTCUT_PREFIX) != -1:
 
@@ -36,11 +35,12 @@ def file_check():
             return line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
 
     fp.close()
-    return "No prefix '" + SHORTCUT_PREFIX + "' command found."
-
+    print("No prefix '" + SHORTCUT_PREFIX + "' command found.")
+    return ""
 
 # Parameter: strToInsert is the string you want inserted into file
 def insert_into_file(strToInsert):
+    print("Pooping an answer in your file")
     # Why TF does this need to be declared but not DIRECTORY or anything else
     SHORTCUT_FOUND = False
 
@@ -102,27 +102,16 @@ def insert_into_file(strToInsert):
         os.remove(newFileCreated)
         print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
 
-
-def translate():
-    print("Translating command...")
-    """after identifing the shorcut identifier it will take the text in between /cs and . to 
-	convert it into how2 text in shortcut"""
-
-
-def query():
+def query(CS_COMMAND):
     print("Finding answers...")
-    """open new terminal session and paste how2 translation"""
-
+    os.system("cd " + DIRECTORY_PATH)
+    os.system("script")
+    os.system(CS_COMMAND)
+    return
 
 def copy():
     print("Making things nice...")
     """copy code from terminal"""
 
-
-def inject():
-    print("Pooping an answer in your file")
-    "injects copied texts to end of file"
-
-
-def remove_shortcut():
-    """removes the /cs command that was found"""
+def remove_typescript():
+    print("TODO REMOVE TYPESCRIPT FILE")
