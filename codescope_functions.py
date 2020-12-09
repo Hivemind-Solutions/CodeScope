@@ -77,7 +77,7 @@ def insert_into_file(strToInsert):
                 # TODO could also ask if user still wants to insert code here, even though there is no '.'
                 # This would just be a supplemental feature
                 return
-            fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):])
+            fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):] + "----------" + "\n")
             SHORTCUT_FOUND = True
         else:
             # Copy line to fileToWrite
@@ -104,16 +104,21 @@ def insert_into_file(strToInsert):
         # TODO Could make better by checking entire file for 'cs' command and not doing anything if not found.
         # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
-        print("No '" + SHORTCUT_PREFIX + "' command found. Finished."
-              )
+        print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
 
 
 def query(CS_COMMAND):
     print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
     RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout
-    #os.system("$(how2 " + CS_COMMAND + ") > " + "test.txt")
+    """string = "ab1cd1ef"
+    string = string.replace("1", "")
+    print(string)"""
     return RESULT
+
+def format(RESULT):
+    print("Formatting result...")
+    RESULT
 
 def remove_typescript():
     print("TODO REMOVE TYPESCRIPT FILE")
