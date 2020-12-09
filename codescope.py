@@ -1,19 +1,21 @@
 from codescope_functions import file_check, insert_into_file, query
 import time as t
+import os
+
 
 def main():
     print("Initializing CodeScope... ")
 
-    CS_COMMAND = "how2" + file_check()
+    CS_COMMAND = file_check()
 
     if CS_COMMAND == "":
         print("No proper commands found!")
         return
 
-    """query(CS_COMMAND="how2" + file_check())"""
+    ANSWER = query(CS_COMMAND)
 
-    ANSWER = """text from answer"""""
     insert_into_file(str(ANSWER))
+
 
 if __name__ == "__main__":
     main()

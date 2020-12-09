@@ -1,4 +1,6 @@
 import os
+import subprocess
+import time as t
 
 # Set this to True if you want to debug, otherwise False
 DEBUG = True
@@ -8,6 +10,7 @@ DIRECTORY_PATH = "/Users/alexanderhaislip/Desktop/testproject/"
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
+TYPESCRIPT_NAME = "typescript"
 
 def install_how2():
     """checks for how2 installation or will install it if it is not found"""
@@ -32,7 +35,8 @@ def file_check():
                 print("WARNING: No suffix: '" + SHORTCUT_SUFFIX + "' command found, returning.")
                 return ""
             fp.close()
-            return line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
+            CSCOMMAND = line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
+            return CSCOMMAND
 
     fp.close()
     print("No prefix '" + SHORTCUT_PREFIX + "' command found.")
@@ -100,18 +104,16 @@ def insert_into_file(strToInsert):
         # TODO Could make better by checking entire file for 'cs' command and not doing anything if not found.
         # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
-        print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
+        print("No '" + SHORTCUT_PREFIX + "' command found. Finished."
+              )
+
 
 def query(CS_COMMAND):
     print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
-    os.system("script")
-    os.system(CS_COMMAND)
-    return
-
-def copy():
-    print("Making things nice...")
-    """copy code from terminal"""
+    RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout
+    #os.system("$(how2 " + CS_COMMAND + ") > " + "test.txt")
+    return RESULT
 
 def remove_typescript():
     print("TODO REMOVE TYPESCRIPT FILE")
