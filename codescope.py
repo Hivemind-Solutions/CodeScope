@@ -2,7 +2,6 @@ from codescope_functions import file_check, insert_into_file, query
 import time as t
 import os
 
-
 def main():
     print("Initializing CodeScope... ")
 
@@ -17,5 +16,6 @@ def main():
     insert_into_file(str(ANSWER))
 
 
-if __name__ == "__main__":
-    main()
+while True:
+    if __name__ == '__main__':
+        main()

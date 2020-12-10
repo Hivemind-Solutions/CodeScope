@@ -1,12 +1,14 @@
 import os
 import subprocess
-import time as t
+import re
 
 # Set this to True if you want to debug, otherwise False
 DEBUG = True
 
-DIRECTORY = "/Users/alexanderhaislip/Desktop/testproject/test.py"
-DIRECTORY_PATH = "/Users/alexanderhaislip/Desktop/testproject/"
+DIRECTORY = input("What is the path to the FILE you would like to use CodeScope with: ")
+""""/Users/alexanderhaislip/Desktop/testproject/test.py"""
+DIRECTORY_PATH = input("What is the path to the DIRECTORY you would like to use CodeScope with: ")
+""""/Users/alexanderhaislip/Desktop/testproject"""
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
@@ -89,8 +91,9 @@ def insert_into_file(strToInsert):
 
     # Overwrite fileToRead (DIRECTORY) with fileToWrite (newFileCreated)
     if DEBUG and SHORTCUT_FOUND:
-        response = input("Are you sure you want to replace: " + DIRECTORY + "? (y/n) ")
-        if response.lower() == "y" or response.lower() == "yes":
+
+        RESPONSE = "yes"
+        if RESPONSE == "yes":
             os.remove(DIRECTORY)
             os.rename(newFileCreated, DIRECTORY)
             print("File modified successfully.")
@@ -105,15 +108,21 @@ def insert_into_file(strToInsert):
         # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
         print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
+        pass
 
 
 def query(CS_COMMAND):
     print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
     RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout
-    """string = "ab1cd1ef"
-    string = string.replace("1", "")
-    print(string)"""
+
+    RESULT = re.sub('You should use the option', '', RESULT)
+    re.sub('to specify the language.', '', RESULT)
+    RESULT = re.sub('Press SPACE for more choices, any other key to quit.', '', RESULT)
+    RESULT = RESULT.encode().decode('utf-8')
+
+    print(RESULT)
+
     return RESULT
 
 def format(RESULT):
