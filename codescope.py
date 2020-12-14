@@ -1,6 +1,5 @@
 from codescope_functions import file_check, insert_into_file, query
-import time as t
-import os
+
 
 def main():
     print("Initializing CodeScope... ")
