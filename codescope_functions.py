@@ -3,7 +3,7 @@ import subprocess
 import re
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QPushButton, QVBoxLayout, QFileDialog
+    QPushButton, QVBoxLayout, QFileDialog, QDesktopWidget
 
 DEBUG = True
 DIRECTORY = ""
@@ -14,33 +14,41 @@ TYPESCRIPT_NAME = "typescript"
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):  # --------------
-        super(MainWindow, self).__init__(parent)  # |
-        self.setWindowTitle("CodeScope")  # |
-        btn = QPushButton("Select File ...")  # |---- Just initialization
-        layout = QVBoxLayout()  # |
-        layout.addWidget(btn)  # |
-        widget = QWidget()  # |
-        widget.setLayout(layout)  # |
-        self.setCentralWidget(widget)  # -------------
+    def __init__(self, parent=None):
+        super(MainWindow, self).__init__(parent)
+        self.setWindowTitle("CodeScope")
+        btn = QPushButton("Select File ...")
+        layout = QVBoxLayout()
+        layout.addWidget(btn)
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
 
-        btn.clicked.connect(self.open)  # connect clicked to self.open()
+        btn.clicked.connect(self.open)
         self.show()
 
     def open(self):
+        global DIRECTORY
         path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
         if path != ('', ''):
             DIRECTORY = path[0]
             print(DIRECTORY)
+            self.close()
             return DIRECTORY
+
+    def center(self):
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
 
 
 def capture_file():
     app = QApplication(sys.argv)
     m = MainWindow()
+    m.center()
     m.show()
     app.exec_()
-    sys.exit()
 
 def file_check():
     # open file for reading
@@ -67,7 +75,6 @@ def file_check():
 
 # Parameter: strToInsert is the string you want inserted into file
 def insert_into_file(strToInsert):
-    print("Pooping an answer in your file")
     # Why TF does this need to be declared but not DIRECTORY or anything else
     SHORTCUT_FOUND = False
 
@@ -97,8 +104,6 @@ def insert_into_file(strToInsert):
                 print("ERROR: File does not contain 'shortcut suffix': " + SHORTCUT_SUFFIX)
                 fileToRead.close()
                 fileToWrite.close()
-                # TODO could also ask if user still wants to insert code here, even though there is no '.'
-                # This would just be a supplemental feature
                 return
             fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):] + "----------" + "\n")
             SHORTCUT_FOUND = True
@@ -129,29 +134,20 @@ def insert_into_file(strToInsert):
         # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
         print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
-        pass
 
 
-def query(CS_COMMAND):
-    DIRECTORY_PATH = DIRECTORY.strip("/codescope.py")
-    print("Finding answers...")
+def query_how2(CS_COMMAND):
+    FILE = os.path.basename(DIRECTORY)
+    DIRECTORY_PATH = DIRECTORY.strip(FILE + "")
+    DIRECTORY_PATH = DIRECTORY_PATH[:-1]
+    print(DIRECTORY_PATH)
+    if CS_COMMAND != "":
+        print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
     RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout
 
     RESULT = re.sub('You should use the option', '', RESULT)
     re.sub('to specify the language.', '', RESULT)
     RESULT = re.sub('Press SPACE for more choices, any other key to quit.', '', RESULT)
-    RESULT = RESULT.encode().decode('utf-8')
-
     print(RESULT)
-
     return RESULT
-
-
-def format(RESULT):
-    print("Formatting result...")
-    RESULT
-
-
-def remove_typescript():
-    print("TODO REMOVE TYPESCRIPT FILE")

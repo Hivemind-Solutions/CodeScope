@@ -1,26 +1,24 @@
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QVBoxLayout, QPushButton
-from codescope_functions import file_check, insert_into_file, query, capture_file
+from codescope_functions import file_check, insert_into_file, query_how2, capture_file
 from splashscreen_test import *
 
 
 def main():
     print("Initializing CodeScope... ")
 
-    """startup()"""
+    startup()
+    print("startup complete")
     capture_file()
-    print("capture file done ")
-
+    print("capture file complete ")
 
     while True:
-        CS_COMMAND = file_check()
 
+        CS_COMMAND = file_check()
         if CS_COMMAND == "":
             print("No proper commands found!")
-            return
-
-        ANSWER = query(CS_COMMAND)
-
-        insert_into_file(str(ANSWER))
+        if CS_COMMAND != "":
+            ANSWER = query_how2(CS_COMMAND)
+            insert_into_file(str(ANSWER))
 
 
 def startup():
@@ -37,12 +35,13 @@ def startup():
         def flashSplash(self):
             self.splash.show()
             QTimer.singleShot(2000, self.splash.close)
+            self.close()
 
     app = QApplication(sys.argv)
     main = Window()
     QTimer.singleShot(1500, main.close)
     main.show()
-    sys.exit(app.exec_())
+    app.exec_()
 
 
 if __name__ == '__main__':
