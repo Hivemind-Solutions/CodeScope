@@ -18,10 +18,10 @@ class MainWindow(QMainWindow):
         self.show()
 
     def open(self):
-        path = QFileDialog.getOpenFileName(self, 'Select File ...', '',
-                                           'All Files (*.*)')
+        path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
         if path != ('', ''):
-            print("File path : " + path[0])
+            print(path[0])
+            return path[0]
 
 
 if __name__ == "__main__":

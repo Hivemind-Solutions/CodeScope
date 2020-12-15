@@ -1,25 +1,43 @@
 import os
 import subprocess
 import re
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, \
+    QPushButton, QVBoxLayout, QFileDialog
 
-# Set this to True if you want to debug, otherwise False
 DEBUG = True
 
-DIRECTORY = input("What is the path to the FILE you would like to use CodeScope with: ")
-""""/Users/alexanderhaislip/Desktop/testproject/test.py"""
-DIRECTORY_PATH = input("What is the path to the DIRECTORY you would like to use CodeScope with: ")
-""""/Users/alexanderhaislip/Desktop/testproject"""
+
+def capture_file():
+
+    class MainWindow(QMainWindow):
+        def __init__(self, parent=None):  # --------------
+            super(MainWindow, self).__init__(parent)  # |
+            self.setWindowTitle("CodeScope")  # |
+            btn = QPushButton("Select File ...")  # |---- Just initialization
+            layout = QVBoxLayout()  # |
+            layout.addWidget(btn)  # |
+            widget = QWidget()  # |
+            widget.setLayout(layout)  # |
+            self.setCentralWidget(widget)  # -------------
+
+            btn.clicked.connect(self.open_file())  # connect clicked to self.open()
+            self.show()
+
+        def open_file(self):
+            path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
+            if path != ('', ''):
+                print(path[0])
+                return path[0]
+
+
+DIRECTORY =
+DIRECTORY_PATH = DIRECTORY.strip("/codescope.py")
+
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
 TYPESCRIPT_NAME = "typescript"
-
-def install_how2():
-    """checks for how2 installation or will install it if it is not found"""
-
-
-def install_itertools():
-    """checks for itertools installation or will install it if it is not found"""
 
 
 def file_check():
@@ -43,6 +61,7 @@ def file_check():
     fp.close()
     print("No prefix '" + SHORTCUT_PREFIX + "' command found.")
     return ""
+
 
 # Parameter: strToInsert is the string you want inserted into file
 def insert_into_file(strToInsert):
@@ -125,9 +144,11 @@ def query(CS_COMMAND):
 
     return RESULT
 
+
 def format(RESULT):
     print("Formatting result...")
     RESULT
+
 
 def remove_typescript():
     print("TODO REMOVE TYPESCRIPT FILE")
