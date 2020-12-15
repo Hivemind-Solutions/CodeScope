@@ -6,39 +6,41 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, \
     QPushButton, QVBoxLayout, QFileDialog
 
 DEBUG = True
-
-
-def capture_file():
-
-    class MainWindow(QMainWindow):
-        def __init__(self, parent=None):  # --------------
-            super(MainWindow, self).__init__(parent)  # |
-            self.setWindowTitle("CodeScope")  # |
-            btn = QPushButton("Select File ...")  # |---- Just initialization
-            layout = QVBoxLayout()  # |
-            layout.addWidget(btn)  # |
-            widget = QWidget()  # |
-            widget.setLayout(layout)  # |
-            self.setCentralWidget(widget)  # -------------
-
-            btn.clicked.connect(self.open_file())  # connect clicked to self.open()
-            self.show()
-
-        def open_file(self):
-            path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
-            if path != ('', ''):
-                print(path[0])
-                return path[0]
-
-
-DIRECTORY =
-DIRECTORY_PATH = DIRECTORY.strip("/codescope.py")
-
+DIRECTORY = ""
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
 SHORTCUT_FOUND = False
 TYPESCRIPT_NAME = "typescript"
 
+
+class MainWindow(QMainWindow):
+    def __init__(self, parent=None):  # --------------
+        super(MainWindow, self).__init__(parent)  # |
+        self.setWindowTitle("CodeScope")  # |
+        btn = QPushButton("Select File ...")  # |---- Just initialization
+        layout = QVBoxLayout()  # |
+        layout.addWidget(btn)  # |
+        widget = QWidget()  # |
+        widget.setLayout(layout)  # |
+        self.setCentralWidget(widget)  # -------------
+
+        btn.clicked.connect(self.open)  # connect clicked to self.open()
+        self.show()
+
+    def open(self):
+        path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
+        if path != ('', ''):
+            DIRECTORY = path[0]
+            print(DIRECTORY)
+            return DIRECTORY
+
+
+def capture_file():
+    app = QApplication(sys.argv)
+    m = MainWindow()
+    m.show()
+    app.exec_()
+    sys.exit()
 
 def file_check():
     # open file for reading
@@ -131,6 +133,7 @@ def insert_into_file(strToInsert):
 
 
 def query(CS_COMMAND):
+    DIRECTORY_PATH = DIRECTORY.strip("/codescope.py")
     print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
     RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout

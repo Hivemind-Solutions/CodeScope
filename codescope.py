@@ -3,6 +3,26 @@ from codescope_functions import file_check, insert_into_file, query, capture_fil
 from splashscreen_test import *
 
 
+def main():
+    print("Initializing CodeScope... ")
+
+    """startup()"""
+    capture_file()
+    print("capture file done ")
+
+
+    while True:
+        CS_COMMAND = file_check()
+
+        if CS_COMMAND == "":
+            print("No proper commands found!")
+            return
+
+        ANSWER = query(CS_COMMAND)
+
+        insert_into_file(str(ANSWER))
+
+
 def startup():
     class Window(QWidget):
 
@@ -24,26 +44,6 @@ def startup():
     main.show()
     sys.exit(app.exec_())
 
-def select_file():
-    selectFile()
 
-
-def main():
-    print("Initializing CodeScope... ")
-
-    CS_COMMAND = file_check()
-
-    if CS_COMMAND == "":
-        print("No proper commands found!")
-        return
-
-    ANSWER = query(CS_COMMAND)
-
-    insert_into_file(str(ANSWER))
-
-
-while True:
-    if __name__ == '__main__':
-        startup()
-        capture_file()
-        main()
+if __name__ == '__main__':
+    main()
