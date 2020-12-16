@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow, QFileDialog, QVBoxLayout, QPushButton
 from codescope_functions import file_check, insert_into_file, query_how2, capture_file
 from splashscreen_test import *
+import os
 
 
 def main():
@@ -26,8 +27,7 @@ def startup():
 
         def __init__(self):
             super(Window, self).__init__()
-
-            self.splash = QSplashScreen(QPixmap('/Users/alexanderhaislip/Projects/CodeScope/codescope_logo.png'))
+            self.splash = QSplashScreen(QPixmap("codescope_logo.png"))
             self.b1 = self
             Window.resize(self, 5, 5)
             self.b1.flashSplash()

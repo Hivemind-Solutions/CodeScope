@@ -1,2 +1,0 @@
-# CodeScope
-Code. Faster.
