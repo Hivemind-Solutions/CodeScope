@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QMainWindow, QFileDialog, QVBoxLayout, QPushButton
 from codescope_functions import file_check, insert_into_file, query_how2, capture_file
 from splashscreen_test import *
-import os
+import time
+import global_variables as cs_vars
 
 
 def main():
@@ -12,14 +12,15 @@ def main():
     capture_file()
     print("capture file complete ")
 
-    while True:
+    while cs_vars.CS_RUNNING:
 
-        CS_COMMAND = file_check()
-        if CS_COMMAND == "":
+        cs_command = file_check()
+        if cs_command == "":
             print("No proper commands found!")
-        if CS_COMMAND != "":
-            ANSWER = query_how2(CS_COMMAND)
-            insert_into_file(str(ANSWER))
+        if cs_command != "":
+            answer = query_how2(cs_command)
+            insert_into_file(str(answer))
+        time.sleep(0.5)
 
 
 def startup():

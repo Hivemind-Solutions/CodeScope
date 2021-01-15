@@ -2,15 +2,9 @@ import os
 import subprocess
 import re
 import sys
+import global_variables as cs_vars
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, \
     QPushButton, QVBoxLayout, QFileDialog, QDesktopWidget
-
-DEBUG = True
-DIRECTORY = ""
-SHORTCUT_PREFIX = "/cs"
-SHORTCUT_SUFFIX = "."
-SHORTCUT_FOUND = False
-TYPESCRIPT_NAME = "typescript"
 
 
 class MainWindow(QMainWindow):
@@ -28,13 +22,12 @@ class MainWindow(QMainWindow):
         self.show()
 
     def open(self):
-        global DIRECTORY
         path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
         if path != ('', ''):
-            DIRECTORY = path[0]
-            print(DIRECTORY)
+            cs_vars.DIRECTORY = path[0]
+            print(cs_vars.DIRECTORY)
             self.close()
-            return DIRECTORY
+            return cs_vars.DIRECTORY
 
     def center(self):
         qr = self.frameGeometry()
@@ -49,49 +42,60 @@ def capture_file():
     m.center()
     m.show()
     app.exec_()
+    # cs_vars.CS_RUNNING = False
+
 
 def file_check():
+
+    if not os.path.isfile(cs_vars.DIRECTORY):
+        if cs_vars.DEBUG:
+            print("WARNING: '" + cs_vars.DIRECTORY + "' is not a valid file")
+        return ""
+
     # open file for reading
-    fp = open(DIRECTORY, "r")
+    fp = open(cs_vars.DIRECTORY, "r")
     # setting the cs_shortcut to a varible
 
     # search for '/cs' command and return/print it
     for line in fp:
-        if line.find(SHORTCUT_PREFIX) != -1:
+        if line.find(cs_vars.SHORTCUT_PREFIX) != -1:
 
             # Ensure there is a '.' (suffix) after prefix
-            if line.find(SHORTCUT_SUFFIX) == -1:
+            if line.find(cs_vars.SHORTCUT_SUFFIX) == -1:
                 fp.close()
-                print("WARNING: No suffix: '" + SHORTCUT_SUFFIX + "' command found, returning.")
+                if cs_vars.DEBUG:
+                    print("WARNING: No suffix: '" + cs_vars.SHORTCUT_SUFFIX + "' command found, returning.")
                 return ""
             fp.close()
-            CSCOMMAND = line[len(SHORTCUT_PREFIX):line.index(SHORTCUT_SUFFIX)]
+            CSCOMMAND = line[len(cs_vars.SHORTCUT_PREFIX):line.index(cs_vars.SHORTCUT_SUFFIX)]
             return CSCOMMAND
 
     fp.close()
-    print("No prefix '" + SHORTCUT_PREFIX + "' command found.")
+    if cs_vars.DEBUG:
+        print("No prefix '" + cs_vars.SHORTCUT_PREFIX + "' command found.")
     return ""
 
 
 # Parameter: strToInsert is the string you want inserted into file
 def insert_into_file(strToInsert):
     # Why TF does this need to be declared but not DIRECTORY or anything else
-    SHORTCUT_FOUND = False
+    # SHORTCUT_FOUND = False
 
-    if not os.path.isfile(DIRECTORY):
-        print("WARNING: '" + DIRECTORY + "' is not a valid file")
+    if not os.path.isfile(cs_vars.DIRECTORY):
+        if cs_vars.DEBUG:
+            print("WARNING: '" + cs_vars.DIRECTORY + "' is not a valid file")
         return
 
     # Create new file to write to
-    newFileCreated = DIRECTORY + ".temp"
-    if DEBUG:
+    newFileCreated = cs_vars.DIRECTORY + ".temp"
+    if cs_vars.DEBUG:
         print(newFileCreated)
 
     fileToWrite = open(newFileCreated, "w")
-    fileToRead = open(DIRECTORY, "r")
+    fileToRead = open(cs_vars.DIRECTORY, "r")
 
     for line in fileToRead:
-        curLineIndex = line.find(SHORTCUT_PREFIX)
+        curLineIndex = line.find(cs_vars.SHORTCUT_PREFIX)
 
         if curLineIndex != -1:
             # Insert strToInsert into file
@@ -99,13 +103,14 @@ def insert_into_file(strToInsert):
             fileToWrite.write(strToInsert)
 
             # Check for SHORTCUT_SUFFIX
-            curLineIndex = line.find(SHORTCUT_SUFFIX)
+            curLineIndex = line.find(cs_vars.SHORTCUT_SUFFIX)
             if curLineIndex == -1:
-                print("ERROR: File does not contain 'shortcut suffix': " + SHORTCUT_SUFFIX)
+                if cs_vars.DEBUG:
+                    print("ERROR: File does not contain 'shortcut suffix': " + cs_vars.SHORTCUT_SUFFIX)
                 fileToRead.close()
                 fileToWrite.close()
                 return
-            fileToWrite.write(line[curLineIndex + len(SHORTCUT_SUFFIX):] + "----------" + "\n")
+            fileToWrite.write(line[curLineIndex + len(cs_vars.SHORTCUT_SUFFIX):] + "----------" + "\n")
             SHORTCUT_FOUND = True
         else:
             # Copy line to fileToWrite
@@ -116,31 +121,39 @@ def insert_into_file(strToInsert):
     fileToWrite.close()
 
     # Overwrite fileToRead (DIRECTORY) with fileToWrite (newFileCreated)
-    if DEBUG and SHORTCUT_FOUND:
+    if cs_vars.DEBUG and SHORTCUT_FOUND:
 
         RESPONSE = "yes"
         if RESPONSE == "yes":
-            os.remove(DIRECTORY)
-            os.rename(newFileCreated, DIRECTORY)
-            print("File modified successfully.")
+            os.remove(cs_vars.DIRECTORY)
+            os.rename(newFileCreated, cs_vars.DIRECTORY)
+            if cs_vars.DEBUG:
+                print("File modified successfully.")
         else:
-            print("Created '" + newFileCreated + "' file with desired insertions.")
+            if cs_vars.DEBUG:
+                print("Created '" + newFileCreated + "' file with desired insertions.")
     elif SHORTCUT_FOUND:
-        os.remove(DIRECTORY)
-        os.rename(newFileCreated, DIRECTORY)
-        print("File modified successfully.")
+        os.remove(cs_vars.DIRECTORY)
+        os.rename(newFileCreated, cs_vars.DIRECTORY)
+        if cs_vars.DEBUG:
+            print("File modified successfully.")
     else:
         # TODO Could make better by checking entire file for 'cs' command and not doing anything if not found.
         # TODO OR: call file_check before this to ensure 'cs' command is intact
         os.remove(newFileCreated)
-        print("No '" + SHORTCUT_PREFIX + "' command found. Finished.")
+        if cs_vars.DEBUG:
+            print("No '" + cs_vars.SHORTCUT_PREFIX + "' command found. Finished.")
 
 
 def query_how2(CS_COMMAND):
-    FILE = os.path.basename(DIRECTORY)
-    DIRECTORY_PATH = DIRECTORY.strip(FILE + "")
-    DIRECTORY_PATH = DIRECTORY_PATH[:-1]
+    FILE = os.path.basename(cs_vars.DIRECTORY)
+    if cs_vars.DEBUG:
+        print(FILE)
+        print(cs_vars.DIRECTORY)
+    # TODO removes 'C' drive name for windows, should not do that
+    DIRECTORY_PATH = cs_vars.DIRECTORY.strip(str(FILE))
     print(DIRECTORY_PATH)
+
     if CS_COMMAND != "":
         print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
