@@ -1,9 +1,12 @@
-PyQt5==5.15.2	
-PyQt5-sip==12.8.1	
-PyQt5-stubs==5.14.2.2	
-files==1.1.1	
-future==0.18.2	
-pip==20.0.2	
-setuptools==46.0.0	
-tk==0.1.0	
-wheel==0.34.2	
+Pillow	8.0.1	
+PyQt5	5.15.2	
+PyQt5-sip	12.8.1	
+PyQt5-stubs	5.14.2.2	5.14.2.2
+files	1.1.1	
+future	0.18.2	
+pip	20.0.2	
+selenium	3.141.0	
+setuptools	46.0.0	
+tk	0.1.0	
+urllib3	1.26.2	
+wheel	0.34.2	
