@@ -2,165 +2,163 @@ import os
 import subprocess
 import re
 import sys
-import global_variables as cs_vars
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, \
-    QPushButton, QVBoxLayout, QFileDialog, QDesktopWidget
+import codescope_variables as cs_vars
+from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPixmap
+from codescope_classes import MainWindow, SplashScreen
 
 
-class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
-        super(MainWindow, self).__init__(parent)
-        self.setWindowTitle("CodeScope")
-        btn = QPushButton("Select File ...")
-        layout = QVBoxLayout()
-        layout.addWidget(btn)
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
-
-        btn.clicked.connect(self.open)
-        self.show()
-
-    def open(self):
-        path = QFileDialog.getOpenFileName(self, 'Select File ...', '')
-        if path != ('', ''):
-            cs_vars.DIRECTORY = path[0]
-            print(cs_vars.DIRECTORY)
-            self.close()
-            return cs_vars.DIRECTORY
-
-    def center(self):
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
+# Displays splash screen for codescope.
+def startup():
+    app = QApplication(sys.argv)
+    splash_win = SplashScreen()
+    QTimer.singleShot(1500, splash_win.close)
+    splash_win.show()
+    app.exec_()
 
 
+def startup_flash_splash():
+    app = QApplication(sys.argv)
+    label = QLabel('Test')
+    pixmap = QPixmap('assets/codescope_logo.png')
+    label.setPixmap(pixmap)
+    label.setWindowFlags(Qt.SplashScreen | Qt.FramelessWindowHint)
+    label.show()
+    QTimer.singleShot(1500, app.quit)
+    app.exec_()
+    return
+
+
+# Creates GUI for select file after splash screen.
 def capture_file():
     app = QApplication(sys.argv)
     m = MainWindow()
     m.center()
     m.show()
     app.exec_()
+    # TODO when select file window is closed
     # cs_vars.CS_RUNNING = False
 
 
+# Checks the selected file and ensures the codescope command is correct.
+# Returns string to search in codescope command, otherwise return empty string.
 def file_check():
+    cs_command = ""
 
     if not os.path.isfile(cs_vars.DIRECTORY):
         if cs_vars.DEBUG:
             print("WARNING: '" + cs_vars.DIRECTORY + "' is not a valid file")
-        return ""
+        return cs_command
 
     # open file for reading
     fp = open(cs_vars.DIRECTORY, "r")
-    # setting the cs_shortcut to a varible
+    # setting the cs_shortcut to a variable
 
     # search for '/cs' command and return/print it
     for line in fp:
         if line.find(cs_vars.SHORTCUT_PREFIX) != -1:
-
             # Ensure there is a '.' (suffix) after prefix
             if line.find(cs_vars.SHORTCUT_SUFFIX) == -1:
                 fp.close()
                 if cs_vars.DEBUG:
                     print("WARNING: No suffix: '" + cs_vars.SHORTCUT_SUFFIX + "' command found, returning.")
-                return ""
+                return cs_command
             fp.close()
-            CSCOMMAND = line[len(cs_vars.SHORTCUT_PREFIX):line.index(cs_vars.SHORTCUT_SUFFIX)]
-            return CSCOMMAND
+            cs_command = line[len(cs_vars.SHORTCUT_PREFIX):line.index(cs_vars.SHORTCUT_SUFFIX)]
+            return cs_command
 
     fp.close()
     if cs_vars.DEBUG:
         print("No prefix '" + cs_vars.SHORTCUT_PREFIX + "' command found.")
-    return ""
+    return cs_command
 
 
-# Parameter: strToInsert is the string you want inserted into file
-def insert_into_file(strToInsert):
-    # Why TF does this need to be declared but not DIRECTORY or anything else
-    # SHORTCUT_FOUND = False
-
+# Inserts the specified string into the file at the codescope command location.
+# Parameter: str_to_insert is the string you want inserted into file
+def insert_into_file(str_to_insert):
+    # Ensure directory is valid
     if not os.path.isfile(cs_vars.DIRECTORY):
         if cs_vars.DEBUG:
             print("WARNING: '" + cs_vars.DIRECTORY + "' is not a valid file")
         return
 
     # Create new file to write to
-    newFileCreated = cs_vars.DIRECTORY + ".temp"
+    new_file_created = cs_vars.DIRECTORY + ".temp"
     if cs_vars.DEBUG:
-        print(newFileCreated)
+        print(new_file_created)
 
-    fileToWrite = open(newFileCreated, "w")
-    fileToRead = open(cs_vars.DIRECTORY, "r")
+    file_to_write = open(new_file_created, "w")
+    file_to_read = open(cs_vars.DIRECTORY, "r")
 
-    for line in fileToRead:
-        curLineIndex = line.find(cs_vars.SHORTCUT_PREFIX)
+    # Go through file line by line to find where to insert
+    for line in file_to_read:
+        cur_line_index = line.find(cs_vars.SHORTCUT_PREFIX)
 
-        if curLineIndex != -1:
+        if cur_line_index != -1:
             # Insert strToInsert into file
-            fileToWrite.write(line[0:curLineIndex])
-            fileToWrite.write(strToInsert)
+            file_to_write.write(line[0:cur_line_index])
+            file_to_write.write(str_to_insert)
 
             # Check for SHORTCUT_SUFFIX
-            curLineIndex = line.find(cs_vars.SHORTCUT_SUFFIX)
-            if curLineIndex == -1:
+            cur_line_index = line.find(cs_vars.SHORTCUT_SUFFIX)
+            if cur_line_index == -1:
                 if cs_vars.DEBUG:
-                    print("ERROR: File does not contain 'shortcut suffix': " + cs_vars.SHORTCUT_SUFFIX)
-                fileToRead.close()
-                fileToWrite.close()
+                    print("WARNING: File does not contain 'shortcut suffix': " + cs_vars.SHORTCUT_SUFFIX)
+                file_to_read.close()
+                file_to_write.close()
                 return
-            fileToWrite.write(line[curLineIndex + len(cs_vars.SHORTCUT_SUFFIX):] + "----------" + "\n")
-            SHORTCUT_FOUND = True
+            file_to_write.write(line[cur_line_index + len(cs_vars.SHORTCUT_SUFFIX):] + "----------" + "\n")
+            cs_vars.SHORTCUT_FOUND = True
         else:
-            # Copy line to fileToWrite
-            fileToWrite.write(line)
+            # Copy line to file_to_write
+            file_to_write.write(line)
 
     # Close files
-    fileToRead.close()
-    fileToWrite.close()
+    file_to_read.close()
+    file_to_write.close()
 
-    # Overwrite fileToRead (DIRECTORY) with fileToWrite (newFileCreated)
-    if cs_vars.DEBUG and SHORTCUT_FOUND:
-
-        RESPONSE = "yes"
-        if RESPONSE == "yes":
+    # Overwrite file_to_read (DIRECTORY) with file_to_write (new_file_created)
+    if cs_vars.DEBUG and cs_vars.SHORTCUT_FOUND:
+        response = "yes"
+        if response == "yes":
             os.remove(cs_vars.DIRECTORY)
-            os.rename(newFileCreated, cs_vars.DIRECTORY)
+            os.rename(new_file_created, cs_vars.DIRECTORY)
             if cs_vars.DEBUG:
                 print("File modified successfully.")
         else:
             if cs_vars.DEBUG:
-                print("Created '" + newFileCreated + "' file with desired insertions.")
-    elif SHORTCUT_FOUND:
+                print("Created '" + new_file_created + "' file with desired insertions.")
+    elif cs_vars.SHORTCUT_FOUND:
         os.remove(cs_vars.DIRECTORY)
-        os.rename(newFileCreated, cs_vars.DIRECTORY)
+        os.rename(new_file_created, cs_vars.DIRECTORY)
         if cs_vars.DEBUG:
             print("File modified successfully.")
     else:
-        # TODO Could make better by checking entire file for 'cs' command and not doing anything if not found.
-        # TODO OR: call file_check before this to ensure 'cs' command is intact
-        os.remove(newFileCreated)
+        # No
+        os.remove(new_file_created)
         if cs_vars.DEBUG:
             print("No '" + cs_vars.SHORTCUT_PREFIX + "' command found. Finished.")
 
 
-def query_how2(CS_COMMAND):
+# Queries the how2 API to find result for command.
+def query_how2(cs_command):
     FILE = os.path.basename(cs_vars.DIRECTORY)
     if cs_vars.DEBUG:
         print(FILE)
         print(cs_vars.DIRECTORY)
-    # TODO removes 'C' drive name for windows, should not do that
-    DIRECTORY_PATH = cs_vars.DIRECTORY.strip(str(FILE))
+    DIRECTORY_PATH = cs_vars.DIRECTORY.replace(str(FILE), '')
     print(DIRECTORY_PATH)
 
-    if CS_COMMAND != "":
+    if cs_command != "":
         print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
-    RESULT = subprocess.run(["how2", CS_COMMAND], capture_output=True, text=True).stdout
+    RESULT = subprocess.run(["how2", cs_command], capture_output=True, text=True).stdout
 
     RESULT = re.sub('You should use the option', '', RESULT)
     re.sub('to specify the language.', '', RESULT)
     RESULT = re.sub('Press SPACE for more choices, any other key to quit.', '', RESULT)
-    print(RESULT)
+
+    if cs_vars.DEBUG:
+        print(RESULT)
     return RESULT

@@ -1,8 +1,6 @@
-# codescope.py
+# Global constants/variables
 CS_RUNNING = True
-
-# codescope_function.py
-DEBUG = True
+DEBUG = False
 DIRECTORY = ""
 SHORTCUT_PREFIX = "/cs"
 SHORTCUT_SUFFIX = "."
