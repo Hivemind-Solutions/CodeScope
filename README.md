@@ -1,13 +1,4 @@
 # CodeScope
-[forks-url] ---
-[stars-url] ---
-[issues-url] ---
-[license-url] ---
-[linkedin-url] ---
------
-
-
-
 
 <!-- PROJECT LOGO -->
 <br />
