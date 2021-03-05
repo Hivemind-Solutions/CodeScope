@@ -12,8 +12,6 @@
   <p align="center">
     Inject answers directly into any file from Stack Overflow with one simple CodeScope command.
     <br />
-    <a href="https://hivemind.link/codescope/"><strong>See a demo video! »</strong></a>
-    <br />
     <br />
     <a href="https://github.com/alexhaislip/CodeScope/issues">Report Bug</a>
     ·
