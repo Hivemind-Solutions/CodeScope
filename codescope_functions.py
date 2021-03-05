@@ -3,11 +3,13 @@ import subprocess
 import re
 import sys
 import codescope_variables as cs_vars
-from PyQt5.QtWidgets import QApplication, QLabel
+from PyQt5.QtWidgets import QApplication, QLabel, QSplashScreen
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPixmap
 from codescope_classes import MainWindow, SplashScreen
-
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QPushButton, QFileDialog
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QPixmap
 
 # Displays splash screen for codescope.
 def startup():
@@ -20,12 +22,21 @@ def startup():
 
 def startup_flash_splash():
     app = QApplication(sys.argv)
-    label = QLabel('Test')
-    pixmap = QPixmap('assets/codescope_logo.png')
-    label.setPixmap(pixmap)
-    label.setWindowFlags(Qt.SplashScreen | Qt.FramelessWindowHint)
-    label.show()
-    QTimer.singleShot(1500, app.quit)
+    layout = QVBoxLayout()
+    b1 = QPushButton('Display screensaver')
+    layout.addWidget(QPushButton('Display screensaver'))
+
+
+    splash = QSplashScreen(QPixmap('assets/codescope_logo.png'))
+
+        # By default, SplashScreen will be in the center of the screen.
+        # You can move it to a specific location if you want:
+        # self.splash.move(10,10)
+
+    splash.show()
+
+        # Close SplashScreen after 2 seconds (2000 ms)
+    QTimer.singleShot(2000, app.quit)
     app.exec_()
     return
 
