@@ -38,7 +38,7 @@ class MainWindow(QMainWindow):
 class SplashScreen(QWidget):
     def __init__(self):
         super(SplashScreen, self).__init__()
-        self.splash = QSplashScreen(QPixmap('assets/codescope_logo.png'))
+        self.splash = QSplashScreen(QPixmap('codescope_logo.png'))
         self.b1 = self
         SplashScreen.resize(self, 5, 5)
         self.b1.flash_splash()

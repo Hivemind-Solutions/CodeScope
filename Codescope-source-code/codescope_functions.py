@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QPushBut
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
 
+
 # Displays splash screen for codescope.
 def startup():
     app = QApplication(sys.argv)
@@ -26,19 +27,16 @@ def startup_flash_splash():
     b1 = QPushButton('Display screensaver')
     layout.addWidget(QPushButton('Display screensaver'))
 
+    splash = QSplashScreen(QPixmap('codescope_logo.png'))
 
-    splash = QSplashScreen(QPixmap('assets/codescope_logo.png'))
-
-        # By default, SplashScreen will be in the center of the screen.
-        # You can move it to a specific location if you want:
-        # self.splash.move(10,10)
+    # By default, SplashScreen will be in the center of the screen.
+    # You can move it to a specific location if you want:
+    # self.splash.move(10,10)
 
     splash.show()
 
-        # Close SplashScreen after 2 seconds (2000 ms)
+    # Close SplashScreen after 2 seconds (2000 ms)
     QTimer.singleShot(2000, app.quit)
-    app.exec_()
-    return
 
 
 # Creates GUI for select file after splash screen.
