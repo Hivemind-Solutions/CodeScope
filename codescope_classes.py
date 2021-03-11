@@ -33,17 +33,3 @@ class MainWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-
-# Not used, replaced by startup_flash_splash
-class SplashScreen(QWidget):
-    def __init__(self):
-        super(SplashScreen, self).__init__()
-        self.splash = QSplashScreen(QPixmap('codescope_logo.png'))
-        self.b1 = self
-        SplashScreen.resize(self, 5, 5)
-        self.b1.flash_splash()
-
-    def flash_splash(self):
-        self.splash.show()
-        QTimer.singleShot(2000, self.splash.close)
-        self.close()

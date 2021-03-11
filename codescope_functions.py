@@ -16,32 +16,9 @@ import tkinter as tk
 
 # Displays splash screen for codescope.
 def startup_flash_splash():
-    
-    root = tk.Tk()
-    # show no frame
-    root.overrideredirect(True)
-    width = root.winfo_screenwidth()
-    height = root.winfo_screenheight()
-    root.geometry('%dx%d+%d+%d' % (width*0.8, height*0.8, width*0.1, height*0.1))
+    #TODO adding a new spash screen
+    pass
 
-    # take a .jpg picture you like, add text with a program like PhotoFiltre
-    # (free from http://www.photofiltre.com) and save as a .gif image file
-    image_file = os.path.exists("/Users/alexanderhaislip/Projects/CodeScope")
-    #assert os.path.exists(image_file)
-    # use Tkinter's PhotoImage for .gif files
-    image =image_file
-    canvas = tk.Canvas(root, height=height*0.8, width=width*0.8, bg="brown")
-    canvas.create_image(width*0.8/2, height*0.8/2, image=image)
-    canvas.pack()
-
-    # show the splash screen for 5000 milliseconds then destroy
-    root.after(5000, root.destroy)
-    root.mainloop()
-
-    # your console program can start here ...    
-
-
-# Creates GUI for select file after splash screen.
 def capture_file():
     app = QApplication(sys.argv)
     m = MainWindow()
@@ -165,9 +142,12 @@ def query_how2(cs_command):
         print("Finding answers...")
     os.system("cd " + DIRECTORY_PATH)
     RESULT = subprocess.run(["how2", cs_command], capture_output=True, text=True).stdout
-
+    
+    
     RESULT = re.sub('You should use the option', '', RESULT)
-    re.sub('to specify the language.', '', RESULT)
+    RESULT = re.sub('to specify the language.', '')
+    RESULT = re.sub('|/-\|', '')
+    
     RESULT = re.sub('Press SPACE for more choices, any other key to quit.', '', RESULT)
 
     if cs_vars.DEBUG:
