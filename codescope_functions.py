@@ -3,40 +3,42 @@ import subprocess
 import re
 import sys
 import codescope_variables as cs_vars
-from PyQt5.QtWidgets import QApplication, QLabel, QSplashScreen
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QPixmap
-from codescope_classes import MainWindow, SplashScreen
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QPushButton, QFileDialog
+from codescope_classes import MainWindow
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QPushButton, QFileDialog, QSplashScreen
+from PyQt5.QtWidgets import QDialog, QPushButton, QVBoxLayout, QApplication, QSplashScreen 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
+import tkinter as tk
+
 
 
 # Displays splash screen for codescope.
-def startup():
-    app = QApplication(sys.argv)
-    splash_win = SplashScreen()
-    QTimer.singleShot(1500, splash_win.close)
-    splash_win.show()
-    app.exec_()
-
-
 def startup_flash_splash():
-    app = QApplication(sys.argv)
-    layout = QVBoxLayout()
-    b1 = QPushButton('Display screensaver')
-    layout.addWidget(QPushButton('Display screensaver'))
+    
+    root = tk.Tk()
+    # show no frame
+    root.overrideredirect(True)
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    root.geometry('%dx%d+%d+%d' % (width*0.8, height*0.8, width*0.1, height*0.1))
 
-    splash = QSplashScreen(QPixmap('codescope_logo.png'))
+    # take a .jpg picture you like, add text with a program like PhotoFiltre
+    # (free from http://www.photofiltre.com) and save as a .gif image file
+    image_file = os.path.exists("/Users/alexanderhaislip/Projects/CodeScope")
+    #assert os.path.exists(image_file)
+    # use Tkinter's PhotoImage for .gif files
+    image =image_file
+    canvas = tk.Canvas(root, height=height*0.8, width=width*0.8, bg="brown")
+    canvas.create_image(width*0.8/2, height*0.8/2, image=image)
+    canvas.pack()
 
-    # By default, SplashScreen will be in the center of the screen.
-    # You can move it to a specific location if you want:
-    # self.splash.move(10,10)
+    # show the splash screen for 5000 milliseconds then destroy
+    root.after(5000, root.destroy)
+    root.mainloop()
 
-    splash.show()
-
-    # Close SplashScreen after 2 seconds (2000 ms)
-    QTimer.singleShot(2000, app.quit)
+    # your console program can start here ...    
 
 
 # Creates GUI for select file after splash screen.

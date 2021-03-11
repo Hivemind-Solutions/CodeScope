@@ -1,11 +1,10 @@
-from codescope_functions import startup, startup_flash_splash, capture_file, file_check, query_how2, insert_into_file
+from codescope_functions import startup_flash_splash, capture_file, file_check, query_how2, insert_into_file
 import codescope_variables as cs_vars
 import time
 
 
 def main():
     print("Initializing CodeScope... ")
-    # startup()
     startup_flash_splash()
     print("Startup complete")
     capture_file()
