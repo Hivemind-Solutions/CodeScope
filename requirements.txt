@@ -11,3 +11,6 @@ tk	0.1.0
 urllib3	1.26.2	
 wheel	0.34.2	
 PyQt5~=5.15.2
+
+
+how2 & and NPM are required as well.
